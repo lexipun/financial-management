@@ -20,9 +20,22 @@ namespace FinanceManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static functional.Finance myFinance;
         public MainWindow()
         {
             InitializeComponent();
+            myFinance = new functional.Finance();
+        }
+
+        private void income_Click(object sender, RoutedEventArgs e)
+        {
+            Incomes incomes = new Incomes();
+            incomes.Show();
+        }
+
+        private void Expense_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
