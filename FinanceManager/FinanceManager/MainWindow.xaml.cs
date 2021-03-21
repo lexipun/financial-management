@@ -24,7 +24,13 @@ namespace FinanceManager
         public MainWindow()
         {
             InitializeComponent();
-            myFinance = new functional.Finance();
+            myFinance = new functional.Finance(SignalChangeSumm);
+            SignalChangeSumm(0);
+        }
+
+        private void SignalChangeSumm(decimal count)
+        {
+            summ.Text = count.ToString();
         }
 
         private void income_Click(object sender, RoutedEventArgs e)
@@ -35,7 +41,8 @@ namespace FinanceManager
 
         private void Expense_Click(object sender, RoutedEventArgs e)
         {
-
+            Expenses expenses = new Expenses();
+            expenses.Show();
         }
     }
 }

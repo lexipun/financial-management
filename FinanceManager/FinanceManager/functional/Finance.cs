@@ -7,6 +7,7 @@ namespace FinanceManager.functional
     [Serializable]
     public class Finance
     {
+        private Action<decimal> _signalChangeSumm;
         private decimal _budget;
         private List<string> _incomeCauses;
         private List<string> _expenseCauses;
@@ -22,6 +23,7 @@ namespace FinanceManager.functional
                 return false;
             }
             _budget += summ;
+            _signalChangeSumm(_budget);
             return true;
         }
         public bool ChangeBudget(decimal summ, string cause)
@@ -31,6 +33,7 @@ namespace FinanceManager.functional
                 return false;
             }
             _budget += summ;
+            _signalChangeSumm(_budget);
             return true;
         }
 
@@ -53,7 +56,10 @@ namespace FinanceManager.functional
             return true;
         }
 
-        public Finance() { _budget = 0;
+        public Finance(Action<decimal> signalChangeSumm) 
+        {
+            _signalChangeSumm = signalChangeSumm;
+            _budget = 0;
             _incomeCauses = new List<string>();
             _expenseCauses = new List<string>();
         }

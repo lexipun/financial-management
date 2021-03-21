@@ -1,25 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace FinanceManager
 {
     /// <summary>
-    /// Логика взаимодействия для Incomes.xaml
+    /// Логика взаимодействия для Expenses.xaml
     /// </summary>
-    public partial class Incomes : Window
+    public partial class Expenses : Window
     {
         private readonly string AddCause;
         TextBox newCause;
-        public Incomes()
+        public Expenses()
         {
             InitializeComponent();
             AddCause = "Add Cause";
             newCause = new TextBox();
             TextBlock txt;
 
-            foreach (var cause in MainWindow.myFinance.IncomeCauses)
+            foreach (var cause in MainWindow.myFinance.ExpenseCauses)
             {
                 txt = new TextBlock();
                 txt.Text = cause;
@@ -60,7 +67,7 @@ namespace FinanceManager
             TextBlock txt = (TextBlock)fromIncomes.SelectedItem;
             if (txt.Text.Equals(AddCause))
             {
-                if (!MainWindow.myFinance.AddIncomeCause(newCause.Text))
+                if (!MainWindow.myFinance.AddExpenseCause(newCause.Text))
                 {
                     MessageBox.Show("You cannot add cause");
                 }
@@ -75,5 +82,6 @@ namespace FinanceManager
 
             Close();
         }
+
     }
 }

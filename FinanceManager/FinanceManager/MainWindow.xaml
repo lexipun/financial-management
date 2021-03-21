@@ -15,14 +15,19 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="60px" />
             <RowDefinition Height="60px"/>
+            <RowDefinition Height="60px" />
+            <RowDefinition Height="60px"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Button x:Name="income" Grid.Row="0" Grid.Column="1" Margin="10" Click="income_Click">
+        <TextBlock Text="Summ: " Grid.Row="0" Grid.Column="1" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="32"/>
+        <TextBlock x:Name="summ" Grid.Row="1" Grid.Column="1" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="32"/>
+
+        <Button x:Name="income" Grid.Row="2" Grid.Column="1" Margin="10" Click="income_Click">
             <TextBlock Text="Income"/>
         </Button>
 
-        <Button x:Name="Expense" Grid.Row="1" Grid.Column="1" Margin="10" Click="Expense_Click">
+        <Button x:Name="Expense" Grid.Row="3" Grid.Column="1" Margin="10" Click="Expense_Click">
             <TextBlock Text="Expense"/>
         </Button>
     </Grid>
