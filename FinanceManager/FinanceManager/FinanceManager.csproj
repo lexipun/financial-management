@@ -6,4 +6,14 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="resourses\mainData\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="IOFiles">
+      <HintPath>Libriaries\IOFiles\IOFiles.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

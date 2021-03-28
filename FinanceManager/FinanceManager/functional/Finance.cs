@@ -4,10 +4,11 @@ using System.Text;
 
 namespace FinanceManager.functional
 {
-    [Serializable]
-    public class Finance
+    public class Finance: Binder
     {
+        [NonSerialized]
         private Action<decimal> _signalChangeSumm;
+
         private decimal _budget;
         private List<string> _incomeCauses;
         private List<string> _expenseCauses;
