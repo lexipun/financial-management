@@ -3,12 +3,13 @@ using System.IO;
 using IOFiles;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace FinanceManager.functional
 {
     class WriterAndReader: Binder
     {
-        private string _path = "./resourses/mainData/";
+        private string _path = "./resources/mainData/";
             IOFiles.IOFiles IO = new IOFiles.IOFiles();
 
         private void Writer(in string path)
@@ -42,7 +43,18 @@ namespace FinanceManager.functional
 
         public void UserDataSaver()
         {
-            IO.BinarySerialize(MainWindow.myFinance, _path + "currentFinances.xml");
+            Finance finance = MainWindow.myFinance;
+            IO.BinarySerialize(finance, _path + "currentFinances.xml");
+        }
+
+        public void UserDataDeserialize()
+        {
+
+            if(
+            IO.BinaryDeserialize(ref MainWindow.myFinance, _path + "currentFinances.xml"))
+            {
+              
+            }
         }
 
 

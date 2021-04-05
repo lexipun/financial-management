@@ -21,6 +21,7 @@ namespace FinanceManager
     public partial class MainWindow : Window
     {
         public static functional.Finance myFinance;
+        functional.WriterAndReader _writerAndReaderOfData = new functional.WriterAndReader(); 
         public MainWindow()
         {
             InitializeComponent();
@@ -43,6 +44,17 @@ namespace FinanceManager
         {
             Expenses expenses = new Expenses();
             expenses.Show();
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _writerAndReaderOfData.UserDataSaver();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _writerAndReaderOfData.UserDataDeserialize();
+            myFinance.SignalChangeSumm = SignalChangeSumm;
+            myFinance.ChangeBudget(0);
         }
     }
 }
