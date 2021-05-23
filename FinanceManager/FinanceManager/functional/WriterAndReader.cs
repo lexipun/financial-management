@@ -11,6 +11,14 @@ namespace FinanceManager.functional
         private string _path = "./resourses/mainData/";
             IOFiles.IOFiles IO = new IOFiles.IOFiles();
 
+        public WriterAndReader()
+        {
+            if (!Directory.Exists(_path))
+            {
+                Directory.CreateDirectory(_path);
+            }
+        }
+
         private void Writer(in string path)
         {
             string rez = "\t\t" + DateTime.Now + "\n";
@@ -45,6 +53,9 @@ namespace FinanceManager.functional
             IO.BinarySerialize(MainWindow.myFinance, _path + "currentFinances.xml");
         }
 
-
+        public void UserDataLoader()
+        {
+            IO.BinaryDeserialize(ref MainWindow.myFinance, _path + "currentFinances.xml");
+        }
     }
 }

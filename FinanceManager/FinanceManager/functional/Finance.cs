@@ -4,6 +4,7 @@ using System.Text;
 
 namespace FinanceManager.functional
 {
+    [Serializable]
     public class Finance: Binder
     {
         [NonSerialized]
@@ -65,5 +66,10 @@ namespace FinanceManager.functional
             _expenseCauses = new List<string>();
         }
         public Finance(int budget) { _budget = budget; }
+
+        public void SetDataEventAboutChangeData(Action<decimal> signalChangeSumm)
+        {
+            _signalChangeSumm = signalChangeSumm;
+        }
     }
 }

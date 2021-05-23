@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinanceManager.functional;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,10 +22,15 @@ namespace FinanceManager
     public partial class MainWindow : Window
     {
         public static functional.Finance myFinance;
+        WriterAndReader saveData = new WriterAndReader();
         public MainWindow()
         {
             InitializeComponent();
             myFinance = new functional.Finance(SignalChangeSumm);
+
+            saveData.UserDataLoader();
+            myFinance.SetDataEventAboutChangeData(SignalChangeSumm);
+
             SignalChangeSumm(0);
         }
 
@@ -43,6 +49,11 @@ namespace FinanceManager
         {
             Expenses expenses = new Expenses();
             expenses.Show();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            saveData.UserDataSaver();
         }
     }
 }
