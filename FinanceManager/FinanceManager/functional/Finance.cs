@@ -14,6 +14,7 @@ namespace FinanceManager.functional
         private List<string> _incomeCauses;
         private List<string> _expenseCauses;
 
+        public Action<decimal> SignalChangeSumm { set { _signalChangeSumm = value; } }
         public decimal Budget { get { return _budget; } }
         public List<string> IncomeCauses { get { return _incomeCauses; } }
         public List<string> ExpenseCauses { get { return _expenseCauses; } }
