@@ -12,4 +12,8 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="functional\ViewModel\" />
+  </ItemGroup>
+
 </Project>

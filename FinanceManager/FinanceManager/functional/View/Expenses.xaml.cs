@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinanceManager.functional.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -63,8 +64,9 @@ namespace FinanceManager
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            decimal rezult = 0;
+            decimal result;
             TextBlock txt = (TextBlock)fromIncomes.SelectedItem;
+
             if (txt.Text.Equals(AddCause))
             {
                 if (!MainWindow.myFinance.AddExpenseCause(newCause.Text))
@@ -72,9 +74,12 @@ namespace FinanceManager
                     MessageBox.Show("You cannot add cause");
                 }
             }
-            if (Decimal.TryParse(Summ.Text, out rezult))
+
+            if (Decimal.TryParse(Summ.Text, out result))
             {
-                if (rezult < 0 || !MainWindow.myFinance.ChangeBudget(rezult))
+                Act act = new Act() { amount = result, cause = txt.Text };
+
+                if (result < 0 || !MainWindow.myFinance.ChangeBudget(act))
                 {
                     MessageBox.Show("Oops. You cannot add summ");
                 }

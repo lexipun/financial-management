@@ -1,43 +1,62 @@
-﻿using System;
+﻿using FinanceManager.functional.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FinanceManager.functional
 {
     [Serializable]
-    public class Finance: Binder
+    public class Finance
     {
         [NonSerialized]
         private Action<decimal> _signalChangeSumm;
-
         private decimal _budget;
         private List<string> _incomeCauses;
         private List<string> _expenseCauses;
 
+        public List<Act> StoryActs { get; private set; }
         public Action<decimal> SignalChangeSumm { set { _signalChangeSumm = value; } }
         public decimal Budget { get { return _budget; } }
         public List<string> IncomeCauses { get { return _incomeCauses; } }
         public List<string> ExpenseCauses { get { return _expenseCauses; } }
 
-        public bool ChangeBudget(decimal summ)
+        public Finance(Action<decimal> signalChangeSumm) 
+        {
+            _signalChangeSumm = signalChangeSumm;
+            _budget = 0;
+            StoryActs = new List<Act>();
+            _incomeCauses = new List<string>();
+            _expenseCauses = new List<string>();
+        }
+        public Finance(int budget) { _budget = budget; StoryActs = new List<Act>(); }
+
+        private bool ChangeBudget(decimal summ)
         {
             if (summ < 0 && _budget + summ < 0)
             {
                 return false;
             }
+
             _budget += summ;
             _signalChangeSumm(_budget);
+
             return true;
         }
-        public bool ChangeBudget(decimal summ, string cause)
+        public bool ChangeBudget(Act act)
         {
-            if ((summ < 0 && _budget + summ <0) )
+            bool result = ChangeBudget(act.amount);
+
+            if (result)
             {
-                return false;
+                if(StoryActs is null)
+                {
+                    StoryActs = new List<Act>();
+                }
+
+                StoryActs.Add(act);
             }
-            _budget += summ;
-            _signalChangeSumm(_budget);
-            return true;
+
+            return result;
         }
 
         public bool AddIncomeCause(string cause)
@@ -46,7 +65,9 @@ namespace FinanceManager.functional
             {
                 return false;
             }
+
             _incomeCauses.Add(cause);
+
             return true;
         }
         public bool AddExpenseCause(string cause)
@@ -55,18 +76,12 @@ namespace FinanceManager.functional
             {
                 return false;
             }
+
             _incomeCauses.Add(cause);
+
             return true;
         }
 
-        public Finance(Action<decimal> signalChangeSumm) 
-        {
-            _signalChangeSumm = signalChangeSumm;
-            _budget = 0;
-            _incomeCauses = new List<string>();
-            _expenseCauses = new List<string>();
-        }
-        public Finance(int budget) { _budget = budget; }
 
         public void SetDataEventAboutChangeData(Action<decimal> signalChangeSumm)
         {

@@ -21,21 +21,20 @@ namespace FinanceManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static functional.Finance myFinance;
-<<<<<<< HEAD
-        WriterAndReader saveData = new WriterAndReader();
-=======
-        functional.WriterAndReader _writerAndReaderOfData = new functional.WriterAndReader(); 
->>>>>>> 0cfa25227a9f840b43b1d6c0d712a927b0cd7531
+        public static Finance myFinance;
+        WriterAndReader saveData;
         public MainWindow()
         {
+            saveData = new WriterAndReader();
+
             InitializeComponent();
+
             myFinance = new functional.Finance(SignalChangeSumm);
 
             saveData.UserDataLoader();
             myFinance.SetDataEventAboutChangeData(SignalChangeSumm);
 
-            SignalChangeSumm(0);
+            SignalChangeSumm(myFinance.Budget);
         }
 
         private void SignalChangeSumm(decimal count)
@@ -54,23 +53,10 @@ namespace FinanceManager
             Expenses expenses = new Expenses();
             expenses.Show();
         }
-<<<<<<< HEAD
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             saveData.UserDataSaver();
-=======
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            _writerAndReaderOfData.UserDataSaver();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            _writerAndReaderOfData.UserDataDeserialize();
-            myFinance.SignalChangeSumm = SignalChangeSumm;
-            myFinance.ChangeBudget(0);
->>>>>>> 0cfa25227a9f840b43b1d6c0d712a927b0cd7531
         }
     }
 }
