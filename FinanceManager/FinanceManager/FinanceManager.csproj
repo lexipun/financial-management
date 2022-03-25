@@ -7,13 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="DotNetFramework">
+      <HintPath>Libriaries\Lexipun\DotNetFramework.dll</HintPath>
+    </Reference>
     <Reference Include="IOFiles">
       <HintPath>Libriaries\IOFiles\IOFiles.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="functional\ViewModel\" />
+    <Folder Include="Resources\Languages\Flags\" />
   </ItemGroup>
 
 </Project>
