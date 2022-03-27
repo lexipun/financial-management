@@ -27,7 +27,7 @@ namespace FinanceManager.functional.Localization
             {
                 if (object.ReferenceEquals(resourceMan, null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CapacityPlanning.Resources.Languages.Language", typeof(Language).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FinanceManager.Functional.Localization.Language", typeof(Language).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

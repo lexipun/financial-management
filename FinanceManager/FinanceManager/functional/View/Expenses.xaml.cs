@@ -1,4 +1,5 @@
-﻿using FinanceManager.functional.Model;
+﻿using FinanceManager.functional.Localization;
+using FinanceManager.functional.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,32 +19,17 @@ namespace FinanceManager
     /// </summary>
     public partial class Expenses : Window
     {
-        private readonly string AddCause;
         TextBox newCause;
         public Expenses()
         {
             InitializeComponent();
-            AddCause = "Add Cause";
-            newCause = new TextBox();
-            TextBlock txt;
-
-            foreach (var cause in MainWindow.myFinance.ExpenseCauses)
-            {
-                txt = new TextBlock();
-                txt.Text = cause;
-                fromIncomes.Items.Add(txt);
-            }
-
-            txt = new TextBlock();
-            txt.Text = AddCause;
-            fromIncomes.Items.Add(txt);
         }
 
         private void fromIncomes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
             TextBlock txt = (TextBlock)comboBox.SelectedItem;
-            if (txt.Text.Equals(AddCause))
+            if (txt.Text.Equals(Translate.AddCause))
             {
 
 
@@ -64,29 +50,13 @@ namespace FinanceManager
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            decimal result;
-            TextBlock txt = (TextBlock)fromIncomes.SelectedItem;
-
-            if (txt.Text.Equals(AddCause))
-            {
-                if (!MainWindow.myFinance.AddExpenseCause(newCause.Text))
-                {
-                    MessageBox.Show("You cannot add cause");
-                }
-            }
-
-            if (Decimal.TryParse(Summ.Text, out result))
-            {
-                Act act = new Act() { amount = result, cause = txt.Text };
-
-                if (result < 0 || !MainWindow.myFinance.ChangeBudget(act))
-                {
-                    MessageBox.Show("Oops. You cannot add summ");
-                }
-            }
-
             Close();
         }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Visibility = Visibility.Collapsed;
+            e.Cancel = true;
+        }
     }
 }

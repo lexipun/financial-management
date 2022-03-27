@@ -6,7 +6,14 @@ namespace FinanceManager.Functional.GlobalPatterns.Observable
 {
     class UpdateDataObservable : IObservable
     {
+        public static UpdateDataObservable Observe { get; private set; }
         private List<IObserver<Dependencies>> _observers = new List<IObserver<Dependencies>>();
+
+        static UpdateDataObservable()
+        {
+            Observe = new UpdateDataObservable();
+        }
+        private UpdateDataObservable() { }
 
         public IDisposable Subscribe(IObserver<Dependencies> currentObserver)
         {
@@ -18,7 +25,7 @@ namespace FinanceManager.Functional.GlobalPatterns.Observable
             return new Unsubscribe(_observers, currentObserver);
         }
 
-        public void PushUpdateDependenciedData(Dependencies changedSource, IObserver<Dependencies> source)
+        public void PushUpdateDependenciedData(Dependencies changedSource, IObserver<Dependencies> source = null)
         {
             try
             {
@@ -26,6 +33,7 @@ namespace FinanceManager.Functional.GlobalPatterns.Observable
                 {
                     observer.OnNext(changedSource);
                 }
+
             }catch( Exception ex)
             {
                 foreach (IObserver<Dependencies> observer in _observers)
@@ -35,7 +43,7 @@ namespace FinanceManager.Functional.GlobalPatterns.Observable
                 return;
             }
 
-            source.OnCompleted();
+            source?.OnCompleted();
         }
 
         #region IncludeDisposeClass

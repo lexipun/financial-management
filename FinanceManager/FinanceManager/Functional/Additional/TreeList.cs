@@ -9,6 +9,13 @@ namespace FinanceManager.functional.Additional
 
         public new void Add(T item)
         {
+            if(Count == 0)
+            {
+                base.Add(item);
+                return;
+            }
+
+
             int position = Count / 2;
             int minimal = 0;
             int maximal = Count - 1;

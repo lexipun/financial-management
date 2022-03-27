@@ -1,4 +1,5 @@
-﻿using Lexipun.DotNetFramework.DataProcessing;
+﻿using FinanceManager.Functional.GlobalPatterns.Observable;
+using Lexipun.DotNetFramework.DataProcessing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,20 +14,26 @@ namespace FinanceManager.functional.Localization
     public class Translate : INotifyPropertyChanged
     {
         #region Fields
-        private static readonly string pathToSave = "./resources/SavedData/";
+        private static readonly string pathToSave = "./Resources/SavedData/";
         private static readonly string filetoSave = "Language.settings";
         private static string addCause;
 
         #endregion Fields
 
         #region Properties
-        public static string AddCause { get => addCause; set{ addCause = value; OnStaticPropertyChanged("AddCause"); } }
+        public static Type Type { get; } = typeof(Translate);
+        public static string AddCause { get => addCause; set { addCause = value; OnStaticPropertyChanged("AddCause"); } }
         protected static string CurrentCulture { get; set; }
 
 
         #endregion
 
-        public void SetLanguage(string culture)
+        static Translate()
+        {
+            LoadCurrentLanguage();
+        }
+
+        private static void SetLanguage(string culture)
         {
             if (!string.IsNullOrEmpty(culture))
             {
@@ -40,19 +47,20 @@ namespace FinanceManager.functional.Localization
             }
 
             AddCause = Language.AddCause;
+
         }
 
-        public async void SetLanguageAsync(string culture)
+        public static async void SetLanguageAsync(string culture)
         {
             await Task.Run(() => SetLanguage(culture));
             SaveCurrentLanguage();
-            UpdateObservable.Update();
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(Type));
         }
 
 
-        public void LoadCurrentLanguage()
+        private static void LoadCurrentLanguage()
         {
-                string loadedData = string.Empty;
+            string loadedData = string.Empty;
 
             if (Directory.Exists(pathToSave) && File.Exists(string.Concat(pathToSave, filetoSave)))
             {
@@ -66,7 +74,7 @@ namespace FinanceManager.functional.Localization
         }
 
 
-        public void SaveCurrentLanguage()
+        private static void SaveCurrentLanguage()
         {
             if (!Directory.Exists(pathToSave))
             {

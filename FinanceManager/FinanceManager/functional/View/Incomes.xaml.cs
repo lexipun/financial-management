@@ -1,4 +1,6 @@
-﻿using FinanceManager.functional.Model;
+﻿using FinanceManager.functional.Localization;
+using FinanceManager.functional.Model;
+using FinanceManager.functional.ViewModel;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,12 +13,11 @@ namespace FinanceManager
     /// </summary>
     public partial class Incomes : Window
     {
-        private readonly string AddCause;
         private readonly TextBox newCause = new TextBox();
         public Incomes()
         {
             InitializeComponent();
-            AddCause = "Add Cause";
+            (DataContext as ChangeFinanceViewModel).IsIncome = true;
         }
 
         private void fromIncomes_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -24,7 +25,7 @@ namespace FinanceManager
             ComboBox comboBox = (ComboBox)sender;
             TextBlock txt = (TextBlock)comboBox.SelectedItem;
 
-            if (txt.Text.Equals(AddCause))
+            if (txt.Text.Equals(Translate.AddCause))
             {
 
 
@@ -51,6 +52,12 @@ namespace FinanceManager
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.Visibility = Visibility.Collapsed;
+            e.Cancel = true;
         }
     }
 }
