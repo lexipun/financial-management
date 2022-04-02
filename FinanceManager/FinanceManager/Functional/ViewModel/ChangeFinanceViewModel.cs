@@ -21,15 +21,26 @@ namespace FinanceManager.functional.ViewModel
         public string SelectedCause { get; set; }
         public string Amount { get; set; }
         public RelayCommand Save_Click_Command { get; set; }
-        public ChangeFinanceViewModel()
+        public ChangeFinanceViewModel(bool isIncome = false)
         {
             Save_Click_Command = new RelayCommand(Save_Click);
             Causes = new TreeList<string>();
             newCause = new TextBox();
+            IsIncome = isIncome;
 
-            foreach (string cause in MainWindow.myFinance.ExpenseCauses)
+            if (isIncome)
             {
-                Causes.Add(cause);
+                foreach (string cause in MainWindow.myFinance.IncomeCauses)
+                {
+                    Causes.Add(cause);
+                }
+            }
+            else
+            {
+                foreach (string cause in MainWindow.myFinance.ExpenseCauses)
+                {
+                    Causes.Add(cause);
+                }
             }
 
             Causes.Add(AddCause);

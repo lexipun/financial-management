@@ -28,8 +28,8 @@ namespace FinanceManager
         private void fromIncomes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            TextBlock txt = (TextBlock)comboBox.SelectedItem;
-            if (txt.Text.Equals(Translate.AddCause))
+            string cause = comboBox.SelectedItem as string;
+            if (cause.Equals(Translate.AddCause))
             {
 
 

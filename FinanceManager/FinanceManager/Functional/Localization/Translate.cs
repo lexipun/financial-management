@@ -17,7 +17,7 @@ namespace FinanceManager.functional.Localization
         #region Fields
         private static readonly string pathToSave = "./Resources/SavedData/";
         private static readonly string filetoSave = "Language.settings";
-        private static PropertyInfo[] properties = Type.GetProperties(BindingFlags.Static | BindingFlags.Public);
+        private static PropertyInfo[] properties;
         private static Language language = new Language();
 
         #endregion Fields
@@ -40,6 +40,7 @@ namespace FinanceManager.functional.Localization
 
         static Translate()
         {
+            properties = Type.GetProperties(BindingFlags.Static | BindingFlags.Public);
             LoadCurrentLanguage();
         }
 

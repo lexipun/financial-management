@@ -47,7 +47,7 @@ namespace FinanceManager.functional
         {
             string lokalPath = "partOfHistory.txt";
 
-            if (File.Exists(_path + lokalPath) && File.GetLastAccessTime(_path + lokalPath).Month != DateTime.Now.Month)
+            if (File.Exists(_path + lokalPath) && File.GetLastWriteTime(_path + lokalPath).Month != DateTime.Now.Month)
             {
                 File.Delete(_path + lokalPath);
             }

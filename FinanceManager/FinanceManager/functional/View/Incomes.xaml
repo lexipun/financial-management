@@ -11,10 +11,7 @@
         Width="800"
         Closing="Window_Closing">
     
-    <Window.DataContext>
-        <viewmodel:ChangeFinanceViewModel/>
-    </Window.DataContext>
-    
+ 
     <Grid x:Name="table">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.7*"/>
@@ -58,7 +55,7 @@
         <Button Grid.Column="2" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Save_Click">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Click">
-                    <i:InvokeCommandAction Command="{Binding Save_Click}"
+                    <i:InvokeCommandAction Command="{Binding Save_Click_Command}"
                                    />
                 </i:EventTrigger>
             </i:Interaction.Triggers>

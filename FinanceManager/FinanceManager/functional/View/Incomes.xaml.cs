@@ -17,15 +17,15 @@ namespace FinanceManager
         public Incomes()
         {
             InitializeComponent();
-            (DataContext as ChangeFinanceViewModel).IsIncome = true;
+            DataContext = new ChangeFinanceViewModel(true);
         }
 
         private void fromIncomes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            TextBlock txt = (TextBlock)comboBox.SelectedItem;
+            string cause = comboBox.SelectedItem as string;
 
-            if (txt.Text.Equals(Translate.AddCause))
+            if (cause.Equals(Translate.AddCause))
             {
 
 
