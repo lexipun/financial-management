@@ -29,7 +29,7 @@
             <RowDefinition Height="0.1*"/>
             <RowDefinition Height="0.2*"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Expense" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32"></TextBlock>
+        <TextBlock Text="{Binding Expense}" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32"></TextBlock>
 
         <ComboBox x:Name="fromIncomes"
                   Grid.Column="1"
@@ -51,7 +51,7 @@
                  MinWidth="40px"/>
 
         <Button Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Cancel_Click">
-            <TextBlock Text="Cancel" FontSize="24"/>
+            <TextBlock Text="{Binding Cancel}" FontSize="24"/>
         </Button>
         <Button Grid.Column="2" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Save_Click">
             <i:Interaction.Triggers>
@@ -61,7 +61,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             
-            <TextBlock Text="Save" FontSize="24"/>
+            <TextBlock Text="{Binding Save}" FontSize="24"/>
         </Button>
     </Grid>
 </Window>

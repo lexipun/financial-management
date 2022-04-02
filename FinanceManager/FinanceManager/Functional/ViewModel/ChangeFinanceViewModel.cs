@@ -2,6 +2,7 @@
 using FinanceManager.functional.Localization;
 using FinanceManager.functional.Model;
 using FinanceManager.Functional.GlobalPatterns.Observable;
+using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,18 @@ using System.Windows.Controls;
 
 namespace FinanceManager.functional.ViewModel
 {
-    class ChangeFinanceViewModel : IObserver<Dependencies>
+    class ChangeFinanceViewModel : Translate, IObserver<Dependencies>
     {
+        private TextBox newCause;
+        private IDisposable undescriber;
         public bool IsIncome {get;set;}
         public TreeList<string> Causes { get; set; }
         public string SelectedCause { get; set; }
         public string Amount { get; set; }
-        private TextBox newCause;
-        private IDisposable undescriber;
+        public RelayCommand Save_Click_Command { get; set; }
         public ChangeFinanceViewModel()
         {
+            Save_Click_Command = new RelayCommand(Save_Click);
             Causes = new TreeList<string>();
             newCause = new TextBox();
 
@@ -29,28 +32,28 @@ namespace FinanceManager.functional.ViewModel
                 Causes.Add(cause);
             }
 
-            Causes.Add(Translate.AddCause);
+            Causes.Add(AddCause);
             undescriber = UpdateDataObservable.Observe.Subscribe(this);
         }
 
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void Save_Click()
         {
 
-            if (SelectedCause.Equals(Translate.AddCause))
+            if (SelectedCause.Equals(AddCause))
             {
                 if (IsIncome)
                 {
                     if (!MainWindow.myFinance.AddIncomeCause(newCause.Text))
                     {
-                        MessageBox.Show(string.Format("this cause \"{0}\" alredy exist", newCause.Text));
+                        MessageBox.Show(string.Format(ExistCause, newCause.Text));
                     }
                 }
                 else
                 {
                     if (!MainWindow.myFinance.AddExpenseCause(newCause.Text))
                     {
-                        MessageBox.Show(string.Format("this cause \"{0}\" alredy exist", newCause.Text));
+                        MessageBox.Show(string.Format(ExistCause, newCause.Text));
                     }
                 }
             }
@@ -62,14 +65,14 @@ namespace FinanceManager.functional.ViewModel
                     spentMoney = -spentMoney;
                 }else if(IsIncome && spentMoney < 0)
                 {
-                    MessageBox.Show("You typed income letter then 0");
+                    MessageBox.Show(IncomeTooSmall);
                 }
 
                 Act act = new Act() { amount = spentMoney, cause = SelectedCause };
 
                 if (spentMoney < 0 || !MainWindow.myFinance.ChangeBudget(act))
                 {
-                    MessageBox.Show(string.Format("your budget is too small for this act \n you need {0}", -(MainWindow.myFinance.Budget + spentMoney)));
+                    MessageBox.Show(string.Format(ExpenseTooBig, -(MainWindow.myFinance.Budget + spentMoney)));
                 }
             }
         }
@@ -86,10 +89,10 @@ namespace FinanceManager.functional.ViewModel
 
         public void OnNext(Dependencies value)
         {
-            if (value.Contains(Translate.Type))
+            if (value.Contains(Type))
             {
                 Causes.RemoveAt(Causes.Count - 1);
-                Causes.Add(Translate.AddCause);
+                Causes.Add(AddCause);
             }
         }
 

@@ -18,8 +18,6 @@ namespace FinanceManager.functional.Localization
         {
         }
 
-        public static string AddCause => ResourceManager.GetString("AddCause", resourceCulture);
-
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager
         {

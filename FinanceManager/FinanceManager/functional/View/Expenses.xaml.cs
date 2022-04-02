@@ -19,7 +19,7 @@ namespace FinanceManager
     /// </summary>
     public partial class Expenses : Window
     {
-        TextBox newCause;
+        TextBox newCause = new TextBox();
         public Expenses()
         {
             InitializeComponent();

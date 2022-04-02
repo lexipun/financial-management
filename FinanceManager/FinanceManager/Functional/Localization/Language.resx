@@ -120,4 +120,29 @@
   <data name="AddCause" xml:space="preserve">
     <value>Add cause</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ExistCause" xml:space="preserve">
+    <value>this cause "{0}" alredy exist</value>
+  </data>
+  <data name="Expense" xml:space="preserve">
+    <value>Expense</value>
+  </data>
+  <data name="ExpenseTooBig" xml:space="preserve">
+    <value>your budget is too small for this act
+you need {0}</value>
+  </data>
+  <data name="Income" xml:space="preserve">
+    <value>Income</value>
+  </data>
+  <data name="IncomeTooSmall" xml:space="preserve">
+    <value>You typed income letter then 0</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Summ: </value>
+  </data>
 </root>

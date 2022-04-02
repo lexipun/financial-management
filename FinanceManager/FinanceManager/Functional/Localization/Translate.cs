@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,14 +17,23 @@ namespace FinanceManager.functional.Localization
         #region Fields
         private static readonly string pathToSave = "./Resources/SavedData/";
         private static readonly string filetoSave = "Language.settings";
-        private static string addCause;
+        private static PropertyInfo[] properties = Type.GetProperties(BindingFlags.Static | BindingFlags.Public);
+        private static Language language = new Language();
 
         #endregion Fields
 
         #region Properties
-        public static Type Type { get; } = typeof(Translate);
-        public static string AddCause { get => addCause; set { addCause = value; OnStaticPropertyChanged("AddCause"); } }
+        protected static Type Type { get; } = typeof(Translate);
         protected static string CurrentCulture { get; set; }
+        public static string AddCause { get; set; }
+        public static string Save { get; set; }
+        public static string Cancel { get; set; }
+        public static string Income { get; set; }
+        public static string Expense { get; set; }
+        public static string ExistCause { get; set; }
+        public static string IncomeTooSmall { get; set; }
+        public static string ExpenseTooBig { get; set; }
+        public static string Summary { get; set; }
 
 
         #endregion
@@ -32,6 +42,7 @@ namespace FinanceManager.functional.Localization
         {
             LoadCurrentLanguage();
         }
+
 
         private static void SetLanguage(string culture)
         {
@@ -46,7 +57,11 @@ namespace FinanceManager.functional.Localization
                 CurrentCulture = CultureInfo.InstalledUICulture.TwoLetterISOLanguageName;
             }
 
-            AddCause = Language.AddCause;
+            foreach (PropertyInfo property in properties)
+            {
+                property.SetValue(language, Language.ResourceManager.GetString(property.Name, Language.Culture));
+                OnStaticPropertyChanged(property.Name);
+            }
 
         }
 
@@ -93,18 +108,13 @@ namespace FinanceManager.functional.Localization
 
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public static void OnStaticPropertyChanged(string PropertyName)
         {
             StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(PropertyName));
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
 
         #endregion INotifyPropertyChanged member
     }

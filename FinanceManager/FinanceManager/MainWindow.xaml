@@ -4,8 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FinanceManager"
+        xmlns:localization="clr-namespace:FinanceManager.functional.Localization"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" FontSize="16" Closing="Window_Closing">
+    <Window.DataContext>
+        <localization:Translate/>
+    </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -20,15 +24,15 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Summ: " Grid.Row="0" Grid.Column="1" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="32"/>
+        <TextBlock Text="{Binding Summary}" Grid.Row="0" Grid.Column="1" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="32"/>
         <TextBlock x:Name="summ" Grid.Row="1" Grid.Column="1" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="32"/>
 
         <Button x:Name="income" Grid.Row="2" Grid.Column="1" Margin="10" Click="income_Click">
-            <TextBlock Text="Income"/>
+            <TextBlock Text="{Binding Income}"/>
         </Button>
 
         <Button x:Name="Expense" Grid.Row="3" Grid.Column="1" Margin="10" Click="Expense_Click">
-            <TextBlock Text="Expense"/>
+            <TextBlock Text="{Binding Expense}"/>
         </Button>
     </Grid>
     
