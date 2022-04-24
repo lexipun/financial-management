@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FinanceManager.Functional.GlobalPatterns.Observable
 {
-    class UpdateDataObservable : IObservable
+    class UpdateDataObservable : IObservable<Dependencies>
     {
         public static UpdateDataObservable Observe { get; private set; }
         private List<IObserver<Dependencies>> _observers = new List<IObserver<Dependencies>>();
@@ -36,10 +36,7 @@ namespace FinanceManager.Functional.GlobalPatterns.Observable
 
             }catch( Exception ex)
             {
-                foreach (IObserver<Dependencies> observer in _observers)
-                {
-                    observer.OnError(ex);
-                }
+                source?.OnError(ex);
                 return;
             }
 

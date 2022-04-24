@@ -3,10 +3,11 @@ using FinanceManager.Functional.UIItems;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace FinanceManager.Functional.BackgroudProcessing.ChartData
 {
-    class GroupDataByPeriod : IPeriod, IObservable
+    class GroupDataByPeriod : IPeriod, IObserver<Dependencies>
     {
         private TimeSpan _frequency;
         private Period _period;
@@ -25,6 +26,8 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
         public void SetFrequency(TimeSpan frequency)
         {
             _frequency = frequency;
+
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(typeof(GroupDataByPeriod)), this);
         }
 
         public void SetDefaultFrequency()
@@ -32,6 +35,8 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
             if((int)_period != int.MaxValue)
             {
                 _frequency = (DateTime.Now - DateTime.Now.AddMonths(-(int)_period)) / 6;
+
+                UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(typeof(GroupDataByPeriod)), this);
                 return;
             }
 
@@ -41,16 +46,23 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
         public void SetPeriod(Period period)
         {
             this._period = period;
+
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(typeof(GroupDataByPeriod)), this);
         }
 
-        public void PushUpdateDependenciedData(Dependencies changedSource, IObserver<Dependencies> source)
+        public void OnCompleted()
         {
-            throw new NotImplementedException();
+            // for logger
         }
 
-        public IDisposable Subscribe(IObserver<Dependencies> observer)
+        public void OnError(Exception error)
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Oops. Something happend i cannot update chart");
+        }
+
+        public void OnNext(Dependencies value)
+        {
+            return;
         }
     }
 }

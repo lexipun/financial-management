@@ -10,7 +10,7 @@ namespace FinanceManager.Functional.CommonInterfaces
         bool IsNeedRebuild { get; set; }
         bool IsNeedUpdateBuild { get; set; }
         UIElement Build();
-        void UipdateBuild();
+        void UpdateBuild();
         void Rebuild();
     }
 }

@@ -8,11 +8,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Media;
 
 namespace FinanceManager.Functional.BackgroudProcessing.ChartData
 {
-    class SourceDataChart<T> : ISourceData, IObservable
+    class SourceDataChart<T> : ISourceData, IObserver<Dependencies>
         where T: IChartModel, new()
     {
         private Brush _brush;
@@ -54,21 +55,30 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
         public void SetMark(Brush brush)
         {
             _brush = brush;
+
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(typeof(SourceDataChart<T>)));
         }
 
         public void SetTypeOfChart(TypeCharts typeCharts)
         {
             _typeCharts = typeCharts;
+
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(typeof(SourceDataChart<T>)));
         }
 
-        public void PushUpdateDependenciedData(Dependencies changedSource, IObserver<Dependencies> source)
+        public void OnCompleted()
         {
-            throw new NotImplementedException();
+            // for logger
         }
 
-        public IDisposable Subscribe(IObserver<Dependencies> observer)
+        public void OnError(Exception error)
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Oops. Something happend i cannot update chart");
+        }
+
+        public void OnNext(Dependencies value)
+        {
+            return;
         }
     }
 }
