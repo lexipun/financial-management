@@ -2,6 +2,7 @@
 using FinanceManager.Functional.GlobalPatterns.Observable;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,15 +26,19 @@ namespace FinanceManager.Functional.UIItems
         Rectungles,
     }
 
-    class Chart:UIElement, IBuilder, IObserver<Dependencies>
+    class Chart : UIElement, IBuilder, IObserver<Dependencies>
     {
         private const double axisWeight = 5;
         private const double textWeight = 60;
+        private const int numberWithoutComma = 10_000;
+        private const int displayingAfterComma = 2;
+
+        private List<double> columnValue = new List<double>();
         public IPeriod Time { get; set; }
         public ISourceData SourceData { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
-        public bool IsNeedRebuild { get ; set ; }
+        public bool IsNeedRebuild { get; set; }
         public bool IsNeedUpdateBuild { get; set; }
         public string DateFormat { get; set; }
         public DateTime ActualDate { get; set; }
@@ -43,7 +48,21 @@ namespace FinanceManager.Functional.UIItems
             ActualDate = DateTime.Now;
         }
 
+        private void GenerateChartValues()
+        {
+            double value;
+            DateTime temp;
+            TimeSpan frequency = Time.GetFrequency();
+            DateTime startpoint = ActualDate.AddMonths(-(int)Time.GetPeriod());
 
+            while (startpoint < ActualDate)
+            {
+                temp = startpoint;
+                startpoint = startpoint.AddDays(frequency.TotalDays);
+                value = SourceData.GetValue(temp, startpoint);
+                columnValue.Add(value);
+            }
+        }
         private UIElement GenerateXAxis()
         {
             const double distanceOfAxisFromBot = 40;
@@ -69,7 +88,7 @@ namespace FinanceManager.Functional.UIItems
             DateTime startDay = ActualDate.AddDays(-(int)period);
             double freqencyDistance = (ActualDate - startDay) / frequency;
 
-            for(DateTime i = startDay; i < ActualDate; i += frequency)
+            for (DateTime i = startDay; i < ActualDate; i += frequency)
             {
                 point = new TextBlock();
 
@@ -92,7 +111,13 @@ namespace FinanceManager.Functional.UIItems
         }
         private UIElement GenerateYAxis()
         {
+            const int limitPoints = 10;
+            const int minimalPoints = 2;
             Canvas result = new Canvas();
+            TextBlock textPoint;
+            double actualHeight = Height - axisWeight - textWeight;
+            double stepNumberPoints = 0;
+            int points = minimalPoints;
 
             Line axis = new Line()
             {
@@ -103,18 +128,86 @@ namespace FinanceManager.Functional.UIItems
             };
 
             result.Children.Add(axis);
+            double maxValue = columnValue.Max();
+            points = GetCountPoints(maxValue, minimalPoints, limitPoints);
+            double distanceStep = actualHeight / points;
+            stepNumberPoints = maxValue / points;
+
+            for (int i = points; i > 0; --i)
+            {
+                double point = maxValue - stepNumberPoints * (points - i);
+
+                if (maxValue > numberWithoutComma)
+                {
+                    point = Math.Ceiling(point / numberWithoutComma) * numberWithoutComma;
+                }
+                else
+                {
+                    point = Math.Round(point, displayingAfterComma);
+                }
+
+                textPoint = new TextBlock()
+                {
+                    Text = point.ToString(),
+                };
+
+                result.Children.Add(textPoint);
+
+                Canvas.SetTop(textPoint, distanceStep * (points - i));
+            }
+
+            return result;
+        }
 
 
+        private int GetCountPoints(double maxValue, int minimalPoints, int limitPoints)
+        {
 
+            int result;
+
+            if (CalculateCorrectPoint(numberWithoutComma, 0, out result))
+            {
+                return result;
+            }
+
+            if (CalculateCorrectPoint(1, displayingAfterComma, out result))
+            {
+                return result;
+            }
+
+            return minimalPoints;
+
+            bool CalculateCorrectPoint(double minValue, int countAfterComma, out int result)
+            {
+                result = default;
+                double tempValue;
+
+                if (maxValue > minValue)
+                {
+                    tempValue = Math.Round(maxValue / limitPoints, countAfterComma);
+
+                    if (tempValue % minValue != 0 && limitPoints > minimalPoints)
+                    {
+                        result = GetCountPoints(maxValue, minimalPoints, limitPoints - 1);
+                        return true;
+                    }
+
+                    result = limitPoints;
+                    return true;
+                }
+
+                return false;
+            }
         }
 
         public UIElement Build()
         {
             throw new NotImplementedException();
 
-            Canvas board = new Canvas();    
+            Canvas board = new Canvas();
 
-            
+
+
 
 
         }
@@ -131,9 +224,9 @@ namespace FinanceManager.Functional.UIItems
 
         public void OnNext(Dependencies value)
         {
-            foreach(Type type in value)
+            foreach (Type type in value)
             {
-                if(type is IPeriod || type is ISourceData)
+                if (type is IPeriod || type is ISourceData)
                 {
                     IsNeedUpdateBuild = true;
                 }
