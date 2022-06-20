@@ -4,8 +4,8 @@ using System.Text;
 
 namespace FinanceManager.Functional.GlobalPatterns.Observable
 {
-    interface IPersonalObserver: IObservable<Dependencies>
+    interface IPersonalObserver: IObservable<Type>
     {
-        void PushUpdateDependenciedData(Dependencies changedSource, IObserver<Dependencies> source);
+        void PushUpdateDependenciedData(Type changedSource, IObserver<Type> source);
     }
 }

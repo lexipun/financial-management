@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace FinanceManager.Functional.UIItems
 {
-    internal interface ISourceData
+    public interface ISourceData
     {
         double GetValue(DateTime from, DateTime To);
         Brush GetMark();

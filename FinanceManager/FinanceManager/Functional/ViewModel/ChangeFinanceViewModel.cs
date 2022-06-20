@@ -2,6 +2,7 @@
 using FinanceManager.functional.Localization;
 using FinanceManager.functional.Model;
 using FinanceManager.Functional.GlobalPatterns.Observable;
+using FinanceManager.Functional.GlobalPatterns.Observe;
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Windows.Controls;
 
 namespace FinanceManager.functional.ViewModel
 {
-    class ChangeFinanceViewModel : Translate, IObserver<Dependencies>
+    class ChangeFinanceViewModel : Translate, IObserver<Type>
     {
         private TextBox newCause;
         private IDisposable undescriber;
@@ -98,9 +99,9 @@ namespace FinanceManager.functional.ViewModel
             
         }
 
-        public void OnNext(Dependencies value)
+        public void OnNext(Type value)
         {
-            if (value.Contains(Type))
+            if (value == Translate.Type)
             {
                 Causes.RemoveAt(Causes.Count - 1);
                 Causes.Add(AddCause);

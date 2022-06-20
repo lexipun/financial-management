@@ -34,6 +34,9 @@
         <Button x:Name="Expense" Grid.Row="3" Grid.Column="1" Margin="10" Click="Expense_Click">
             <TextBlock Text="{Binding Expense}"/>
         </Button>
+		<Button x:Name="History" Grid.Row="4" Grid.Column="1" Margin="10" Click="History_Click">
+			<TextBlock Text="{Binding Expense}"/>
+		</Button>
     </Grid>
     
     

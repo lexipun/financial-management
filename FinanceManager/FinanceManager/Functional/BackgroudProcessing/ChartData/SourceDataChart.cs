@@ -1,6 +1,7 @@
 ﻿using FinanceManager.functional.Additional;
 using FinanceManager.Functional.CommonInterfaces;
 using FinanceManager.Functional.GlobalPatterns.Observable;
+using FinanceManager.Functional.GlobalPatterns.Observe;
 using FinanceManager.Functional.UIItems;
 using FinanceManager.Functional.UIItems.Interfaces.Chart;
 using System;
@@ -13,7 +14,7 @@ using System.Windows.Media;
 
 namespace FinanceManager.Functional.BackgroudProcessing.ChartData
 {
-    class SourceDataChart<T> : ISourceData, IObserver<Dependencies>
+    class SourceDataChart<T> : ISourceData, IObserver<Type>
         where T: IChartModel, new()
     {
         private Brush _brush;
@@ -22,7 +23,7 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
 
         public SourceDataChart()
         {
-
+            SourceData = new SortedSet<T>();
         }
 
         public Brush GetMark()
@@ -47,6 +48,11 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
                 Coordinate = new ChartCoordinate() { Position = to, },
             };
 
+            if (SourceData is null || SourceData.Count == 0)
+            {
+                return 0;
+            }
+
             double result = SourceData.GetViewBetween(viewFrom, viewTo).Sum(element => element.Coordinate.Value);
 
             return result;
@@ -56,14 +62,14 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
         {
             _brush = brush;
 
-            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(typeof(SourceDataChart<T>)));
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(typeof(SourceDataChart<T>));
         }
 
         public void SetTypeOfChart(TypeCharts typeCharts)
         {
             _typeCharts = typeCharts;
 
-            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(typeof(SourceDataChart<T>)));
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(typeof(SourceDataChart<T>));
         }
 
         public void OnCompleted()
@@ -76,7 +82,7 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
             MessageBox.Show("Oops. Something happend i cannot update chart");
         }
 
-        public void OnNext(Dependencies value)
+        public void OnNext(Type value)
         {
             return;
         }

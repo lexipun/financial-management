@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FinanceManager.Functional.GlobalPatterns.Observable
+namespace FinanceManager.Functional.GlobalPatterns.Observe
 {
     class Dependencies: IEnumerable, IEnumerable<Type>
     {

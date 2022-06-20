@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Functional.GlobalPatterns.Observable;
+using FinanceManager.Functional.GlobalPatterns.Observe;
 using Lexipun.DotNetFramework.DataProcessing;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace FinanceManager.functional.Localization
         {
             await Task.Run(() => SetLanguage(culture));
             SaveCurrentLanguage();
-            UpdateDataObservable.Observe.PushUpdateDependenciedData(new Dependencies(Type));
+            UpdateDataObservable.Observe.PushUpdateDependenciedData(Type);
         }
 
 

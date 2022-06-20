@@ -5,7 +5,6 @@ using System.Text;
 namespace FinanceManager.functional.Additional
 {
     class TreeList<T>: List<T>
-        where T: struct
     {
 
         public new void Add(T item)

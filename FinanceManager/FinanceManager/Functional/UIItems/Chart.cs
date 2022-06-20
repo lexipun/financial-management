@@ -26,14 +26,14 @@ namespace FinanceManager.Functional.UIItems
         Rectungles,
     }
 
-    class Chart : UIElement, IBuilder, IObserver<Dependencies>
+    class Chart :  IBuilder, IObserver<Type>
     {
         private const double axisWeight = 5;
         private const double textWeight = 60;
         private const int numberWithoutComma = 10_000;
         private const int displayingAfterComma = 2;
+        private List<double> columnValues = new List<double>();
 
-        private List<double> columnValue = new List<double>();
         public IPeriod Time { get; set; }
         public ISourceData SourceData { get; set; }
         public double Width { get; set; }
@@ -46,6 +46,7 @@ namespace FinanceManager.Functional.UIItems
         public Chart()
         {
             ActualDate = DateTime.Now;
+            
         }
 
         private void GenerateChartValues()
@@ -60,7 +61,7 @@ namespace FinanceManager.Functional.UIItems
                 temp = startpoint;
                 startpoint = startpoint.AddDays(frequency.TotalDays);
                 value = SourceData.GetValue(temp, startpoint);
-                columnValue.Add(value);
+                columnValues.Add(value);
             }
         }
         private UIElement GenerateXAxis()
@@ -85,7 +86,7 @@ namespace FinanceManager.Functional.UIItems
 
             Period period = Time.GetPeriod();
             TimeSpan frequency = Time.GetFrequency();
-            DateTime startDay = ActualDate.AddDays(-(int)period);
+            DateTime startDay = ActualDate.AddMonths(-(int)period);
             double freqencyDistance = (ActualDate - startDay) / frequency;
 
             for (DateTime i = startDay; i < ActualDate; i += frequency)
@@ -102,7 +103,18 @@ namespace FinanceManager.Functional.UIItems
                 }
 
                 Canvas.SetTop(point, axisWeight);
-                Canvas.SetLeft(point, freqencyDistance * (i - startDay) / frequency);
+                double moveFromLeft = (frequency / (freqencyDistance * (i - startDay))) * 1.5 * Width;
+
+                if(moveFromLeft < 0)
+                {
+                    moveFromLeft = 0;
+                }else if (moveFromLeft > Width)
+                {
+                    moveFromLeft = Width;
+                }
+
+
+                Canvas.SetLeft(point, moveFromLeft);
 
                 result.Children.Add(point);
             }
@@ -128,7 +140,17 @@ namespace FinanceManager.Functional.UIItems
             };
 
             result.Children.Add(axis);
-            double maxValue = columnValue.Max();
+            double maxValue;
+
+            if(columnValues is null || columnValues.Count == 0)
+            {
+                maxValue = 2;
+            }
+            else
+            {
+                maxValue = columnValues.Max();
+            }
+
             points = GetCountPoints(maxValue, minimalPoints, limitPoints);
             double distanceStep = actualHeight / points;
             stepNumberPoints = maxValue / points;
@@ -202,13 +224,18 @@ namespace FinanceManager.Functional.UIItems
 
         public UIElement Build()
         {
-            throw new NotImplementedException();
 
-            Canvas board = new Canvas();
+            Canvas board = new Canvas()
+            {
+                Width = Width,
+                Height = Height,
+            };
 
+            board.Children.Add(GenerateYAxis());
+            board.Children.Add(GenerateXAxis());
+            GenerateChartValues();
 
-
-
+            return board;
 
         }
 
@@ -222,15 +249,11 @@ namespace FinanceManager.Functional.UIItems
             IsNeedRebuild = true;
         }
 
-        public void OnNext(Dependencies value)
+        public void OnNext(Type value)
         {
-            foreach (Type type in value)
-            {
-                if (type is IPeriod || type is ISourceData)
-                {
-                    IsNeedUpdateBuild = true;
-                }
-            }
+
+            IsNeedUpdateBuild = true;
+
         }
 
         public void Rebuild()

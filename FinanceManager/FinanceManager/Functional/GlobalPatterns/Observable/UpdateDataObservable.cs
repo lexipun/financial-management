@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
-namespace FinanceManager.Functional.GlobalPatterns.Observable
+namespace FinanceManager.Functional.GlobalPatterns.Observe
 {
-    class UpdateDataObservable : IObservable<Dependencies>
+    class UpdateDataObservable : IObservable<Type>
     {
         public static UpdateDataObservable Observe { get; private set; }
-        private List<IObserver<Dependencies>> _observers = new List<IObserver<Dependencies>>();
+        protected Dictionary<Type, List<IObserver<Type>>> subscribes = new Dictionary<Type, List<IObserver<Type>>>();
+        
 
         static UpdateDataObservable()
         {
@@ -15,26 +17,22 @@ namespace FinanceManager.Functional.GlobalPatterns.Observable
         }
         private UpdateDataObservable() { }
 
-        public IDisposable Subscribe(IObserver<Dependencies> currentObserver)
+        public ISubscribeData Subscribe(IObserver<Type> currentObserver)
         {
-            if (!_observers.Contains(currentObserver))
-            {
-                _observers.Add(currentObserver);
-            }
-
-            return new Unsubscribe(_observers, currentObserver);
+            return new SubscribeData(subscribes, currentObserver);
         }
 
-        public void PushUpdateDependenciedData(Dependencies changedSource, IObserver<Dependencies> source = null)
+        public void PushUpdateDependenciedData(Type changedSource, IObserver<Type> source = null)
         {
             try
             {
-                foreach (IObserver<Dependencies> observer in _observers)
+                foreach (IObserver<Type> observer in subscribes[changedSource])
                 {
                     observer.OnNext(changedSource);
                 }
 
-            }catch( Exception ex)
+            }
+            catch (Exception ex)
             {
                 source?.OnError(ex);
                 return;
@@ -43,25 +41,64 @@ namespace FinanceManager.Functional.GlobalPatterns.Observable
             source?.OnCompleted();
         }
 
+        public void PushExceptionDependenciedData(Type changedSource, Exception exception)
+        {
+            try
+            {
+                foreach (IObserver<Type> observer in subscribes[changedSource])
+                {
+                    observer.OnError(exception);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                // log it
+            }
+        }
+
+        IDisposable IObservable<Type>.Subscribe(IObserver<Type> observer)
+        {
+            return Subscribe(observer);
+        }
+
+
         #region IncludeDisposeClass
 
-        private class Unsubscribe : IDisposable
+        private class SubscribeData : ISubscribeData
         {
-            private List<IObserver<Dependencies>> _observers;
-            private IObserver<Dependencies> _currentObserver;
+            private IObserver<Type> _currentObserver;
+            protected Dictionary<Type, List<IObserver<Type>>> subscribes;
 
-            public Unsubscribe(List<IObserver<Dependencies>> observers, IObserver<Dependencies> currentObserver)
+            public SubscribeData(Dictionary<Type, List<IObserver<Type>>> subscribes, IObserver<Type> currentObserver)
             {
-                _observers = observers;
+                this.subscribes = subscribes;
                 _currentObserver = currentObserver;
             }
 
+            public void AddSubscribeTo(Type type)
+            {
+                if (!subscribes.ContainsKey(type))
+                {
+                    subscribes.Add(type, new List<IObserver<Type>>());
+                }
+
+                subscribes[type].Add(_currentObserver);
+            }
 
             public void Dispose()
             {
-                if (_currentObserver != null && _observers.Contains(_currentObserver))
+                if (_currentObserver is null)
                 {
-                    _observers.Remove(_currentObserver);
+                    return;
+                }
+
+                foreach (var item in subscribes)
+                {
+                    if (item.Value.Contains(_currentObserver))
+                    {
+                        item.Value.Remove(_currentObserver);
+                    }
                 }
             }
 

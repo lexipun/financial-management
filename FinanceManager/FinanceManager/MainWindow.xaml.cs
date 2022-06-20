@@ -1,4 +1,5 @@
 ﻿using FinanceManager.functional;
+using FinanceManager.Functional.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +58,12 @@ namespace FinanceManager
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             saveData.UserDataSaver();
+        }
+
+        private void History_Click(object sender, RoutedEventArgs e)
+        {
+            ChartStatisticView view = new ChartStatisticView();
+            view.Show();
         }
     }
 }
