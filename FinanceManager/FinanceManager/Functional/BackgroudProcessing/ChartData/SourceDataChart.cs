@@ -79,7 +79,7 @@ namespace FinanceManager.Functional.BackgroudProcessing.ChartData
 
         public void OnError(Exception error)
         {
-            MessageBox.Show("Oops. Something happend i cannot update chart");
+            //MessageBox.Show("Oops. Something happend i cannot update chart");
         }
 
         public void OnNext(Type value)

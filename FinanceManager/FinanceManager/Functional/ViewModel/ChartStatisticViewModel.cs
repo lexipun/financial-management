@@ -28,32 +28,50 @@ namespace FinanceManager.Functional.ViewModel
             SourceDataChart<SpendModel> sourceData = new SourceDataChart<SpendModel>();
 
             sourceData.SetMark(Brushes.Red);
-            sourceData.SetTypeOfChart(TypeCharts.Rectungles);
+            sourceData.SetTypeOfChart(TypeCharts.Rectangles);
             FillData(sourceData.SourceData);
 
             chart = new Chart()
             {
                 ActualDate = DateTime.Now,
                 Height = 200,
-                Width = 800,
+                Width = 400,
                 Time = dataByPeriod,
                 SourceData = sourceData,
                 DateFormat = "dd.MM",
             };
 
-            chart.ActualDate = DateTime.Now;
 
             return chart.Build();
         }
 
         private void FillData(SortedSet<SpendModel> collection)
         {
-            foreach(Act act in MainWindow.myFinance.StoryActs)
+            //foreach(Act act in MainWindow.myFinance.StoryActs)
+            //{
+            //    ChartCoordinate chartCoordinate = new ChartCoordinate()
+            //    {
+            //        Position = act.LastChange,
+            //        Value = (double)act.amount,
+
+            //    };
+            //    SpendModel spendModel = new SpendModel()
+            //    {
+            //        Coordinate = chartCoordinate,
+            //    };
+
+            //    collection.Add(spendModel);
+            //}
+
+            ///////////Test Data///////////////////////
+            ///
+
+            for(DateTime start = DateTime.Today.AddMonths(-1); start <= DateTime.Today; start = start.AddDays(1))
             {
                 ChartCoordinate chartCoordinate = new ChartCoordinate()
                 {
-                    Position = act.LastChange,
-                    Value = (double)act.amount,
+                    Position = start,
+                    Value = (double)10,
 
                 };
                 SpendModel spendModel = new SpendModel()

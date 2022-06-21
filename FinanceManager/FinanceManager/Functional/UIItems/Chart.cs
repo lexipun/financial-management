@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace FinanceManager.Functional.UIItems
@@ -23,13 +24,15 @@ namespace FinanceManager.Functional.UIItems
     {
         Line,
         Points,
-        Rectungles,
+        Rectangles,
     }
 
-    class Chart :  IBuilder, IObserver<Type>
+    class Chart : IBuilder, IObserver<Type>
     {
+        private const int limitPoints = 10;
+        private const int minimalPoints = 2;
         private const double axisWeight = 5;
-        private const double textWeight = 60;
+        private const double textWeight = 30;
         private const int numberWithoutComma = 10_000;
         private const int displayingAfterComma = 2;
         private List<double> columnValues = new List<double>();
@@ -46,7 +49,7 @@ namespace FinanceManager.Functional.UIItems
         public Chart()
         {
             ActualDate = DateTime.Now;
-            
+
         }
 
         private void GenerateChartValues()
@@ -77,19 +80,20 @@ namespace FinanceManager.Functional.UIItems
             Line xAxis = new Line()
             {
                 X1 = 0,
-                X2 = Width,
+                X2 = Width + 30,
                 Y1 = 0,
-                Y2 = axisWeight,
+                Y2 = 0,
+                Stroke = Brushes.Black,
             };
-
+            
             result.Children.Add(xAxis);
 
             Period period = Time.GetPeriod();
             TimeSpan frequency = Time.GetFrequency();
             DateTime startDay = ActualDate.AddMonths(-(int)period);
             double freqencyDistance = (ActualDate - startDay) / frequency;
-
-            for (DateTime i = startDay; i < ActualDate; i += frequency)
+            int index = 0;
+            for (DateTime i = startDay; (i - ActualDate).Days < 0; i += frequency)
             {
                 point = new TextBlock();
 
@@ -99,16 +103,18 @@ namespace FinanceManager.Functional.UIItems
                 }
                 else
                 {
-                    point.Text = i.ToString(DateFormat);
+                    point.Text = string.Concat(i.ToString(DateFormat), "-", (i + frequency).ToString(DateFormat));
                 }
 
                 Canvas.SetTop(point, axisWeight);
-                double moveFromLeft = (frequency / (freqencyDistance * (i - startDay))) * 1.5 * Width;
+                double distance = (index / (freqencyDistance));
+                double moveFromLeft = distance * Width + Width/freqencyDistance * 0.5 + 40 - 50;
 
-                if(moveFromLeft < 0)
+                if (moveFromLeft < 0)
                 {
                     moveFromLeft = 0;
-                }else if (moveFromLeft > Width)
+                }
+                else if (moveFromLeft > Width)
                 {
                     moveFromLeft = Width;
                 }
@@ -117,14 +123,15 @@ namespace FinanceManager.Functional.UIItems
                 Canvas.SetLeft(point, moveFromLeft);
 
                 result.Children.Add(point);
+                ++index;
             }
 
             return result;
         }
+        double maxValue = 2;
         private UIElement GenerateYAxis()
         {
-            const int limitPoints = 10;
-            const int minimalPoints = 2;
+            
             Canvas result = new Canvas();
             TextBlock textPoint;
             double actualHeight = Height - axisWeight - textWeight;
@@ -134,15 +141,16 @@ namespace FinanceManager.Functional.UIItems
             Line axis = new Line()
             {
                 X1 = textWeight,
-                X2 = textWeight + axisWeight,
-                Y1 = 0,
-                Y2 = Height,
+                X2 = textWeight,
+                Y1 = -30,
+                Y2 = Height - 20,
+                Stroke = Brushes.Black,
             };
 
             result.Children.Add(axis);
-            double maxValue;
+            
 
-            if(columnValues is null || columnValues.Count == 0)
+            if (columnValues is null || columnValues.Count == 0)
             {
                 maxValue = 2;
             }
@@ -152,10 +160,10 @@ namespace FinanceManager.Functional.UIItems
             }
 
             points = GetCountPoints(maxValue, minimalPoints, limitPoints);
-            double distanceStep = actualHeight / points;
+            double distanceStep = (Height - 40) / points;
             stepNumberPoints = maxValue / points;
 
-            for (int i = points; i > 0; --i)
+            for (int i = points; i >= 0; --i)
             {
                 double point = maxValue - stepNumberPoints * (points - i);
 
@@ -175,12 +183,66 @@ namespace FinanceManager.Functional.UIItems
 
                 result.Children.Add(textPoint);
 
-                Canvas.SetTop(textPoint, distanceStep * (points - i));
+                Canvas.SetTop(textPoint, distanceStep * (points - i) - 20);
             }
 
             return result;
         }
 
+        private Rectangle GetRectangle(double height, double width, double startPoint,object context)
+        {
+            Rectangle result = new Rectangle()
+            {
+                Height = height,
+                Width = width,
+                Fill = Brushes.LightBlue,
+                 ToolTip = context,
+            };
+            
+            Canvas.SetTop(result, Height - height - 40);
+            Canvas.SetLeft(result, startPoint + 40);
+
+            return result;
+        }
+        private UIElement GenerateContent()
+        {
+            var result = new Canvas();
+
+            TypeCharts type = SourceData.GetTypeOfChart();
+            Period period = Time.GetPeriod();
+            TimeSpan frequency = Time.GetFrequency();
+            DateTime startDay = ActualDate.AddMonths(-(int)period);
+            double freqencyDistance = frequency/ (ActualDate - startDay) * Width ;
+            int index = 0;
+            for (DateTime i = startDay; (i - ActualDate).Days < 0; i += frequency)
+            {
+                double value = SourceData.GetValue(i, i + frequency);
+                double dataHeight = (Height - 20) / maxValue * value;
+                double startPoint = freqencyDistance * index + freqencyDistance * 0.5; 
+
+
+                switch (type)
+                {
+                    case TypeCharts.Rectangles:
+                        {
+                            double rectangleWidth = freqencyDistance * 0.9;
+                            startPoint -= freqencyDistance * 0.5;
+                            result.Children.Add(GetRectangle(dataHeight, rectangleWidth, startPoint, value));
+                        }
+                        break;
+                    case TypeCharts.Points:
+                        {
+
+                        }
+                        break;
+                }
+
+                ++index;
+            }
+
+
+            return result;
+        }
 
         private int GetCountPoints(double maxValue, int minimalPoints, int limitPoints)
         {
@@ -228,12 +290,13 @@ namespace FinanceManager.Functional.UIItems
             Canvas board = new Canvas()
             {
                 Width = Width,
-                Height = Height,
+                Height = Height - maxValue / GetCountPoints(maxValue, minimalPoints, limitPoints),
             };
 
+            GenerateChartValues();
             board.Children.Add(GenerateYAxis());
             board.Children.Add(GenerateXAxis());
-            GenerateChartValues();
+            board.Children.Add(GenerateContent());
 
             return board;
 
